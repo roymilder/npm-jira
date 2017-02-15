@@ -1,0 +1,15 @@
+{
+  "coverage": "60%",
+  "expectCount": 5,
+  "actualCount": 3,
+  "files": {
+    "src/TapsterJira.js": {
+      "expectCount": 5,
+      "actualCount": 3,
+      "undocumentLines": [
+        11,
+        3
+      ]
+    }
+  }
+}
