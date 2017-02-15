@@ -88,7 +88,7 @@ function getTicketDetails(cb) {
 
         _inquirer2.default.prompt(prompts).then(function (answers) {
             if (answers) {
-                Jira.createIssue(answers.type, answers.project, answers.subject, answers.description, _config2.default['jira-project-settings']['shouldSetAssignee'] ? answers.assignee : null).then(function (response) {
+                Jira.createIssue(answers.type, answers.project, answers.subject, answers.description, _config2.default['jira-default-project-settings']['shouldSetAssignee'] ? answers.assignee : null).then(function (response) {
                     print(response);
                 }).catch(function (err) {
                     errorHandler(err.message);
