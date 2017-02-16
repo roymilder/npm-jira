@@ -38,7 +38,8 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/TapsterJira.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import prettyjson from &apos;prettyjson&apos;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">#! /usr/bin/env node
+import prettyjson from &apos;prettyjson&apos;;
 
 export default class TapsterJira {
 
@@ -68,7 +69,11 @@ export default class TapsterJira {
         parameters.fields.issuetype = {name: type};
         parameters.fields.summary = subject;
         parameters.fields.description = description;
-        parameters.fields.assignee = {name: assignee};
+
+        if (assignee) {
+            parameters.fields.assignee = {name: assignee};
+        }
+
 
         console.log(prettyjson.render(&apos;Creating issue&apos;));
 

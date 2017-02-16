@@ -1,20 +1,19 @@
 {
   "name": "npm-jira",
-  "version": "0.0.0",
+  "version": "0.4.0",
   "description": "Create JIRA issues from the command line!",
   "main": "index.js",
   "scripts": {
     "debug": "npm build &&  node dist/index.js",
-    "copy": "cp src/config.json dist/",
     "test": "npm run lint && mocha && npm run docs-build",
-    "build": "rm -rf dist && babel src --out-dir dist && npm run copy",
+    "build": "rm -rf dist && babel src --out-dir dist",
     "docs-build": "rm -rf docs && esdoc -c esdoc.json",
     "lint": "eslint ./",
     "prepublish": "npm run build && npm run docs-build",
     "release": "release"
   },
   "bin": {
-    "jira": "node dist/index.js"
+    "jira": "dist/index.js"
   },
   "repository": {
     "type": "git",

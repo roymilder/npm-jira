@@ -10,7 +10,7 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "import prettyjson from 'prettyjson';\n\nexport default class TapsterJira {\n\n    /**\n     * @constructor\n     * @function\n     * @param {Jira} Jira jira client\n     */\n    constructor(Jira) {\n        this.Jira = Jira;\n    }\n\n    /**\n     * @name createIssue\n     * @function\n     * Creates a new jira issue\n     * @param {string} type\n     * @param {string} project - jira project key\n     * @param {string} subject\n     * @param {string} description\n     * @param {string} assignee\n     */\n    createIssue(type, project, subject, description, assignee) {\n\n        let parameters = {fields: {}};\n        parameters.fields.project = {key: project};\n        parameters.fields.issuetype = {name: type};\n        parameters.fields.summary = subject;\n        parameters.fields.description = description;\n        parameters.fields.assignee = {name: assignee};\n\n        console.log(prettyjson.render('Creating issue'));\n\n        return this.Jira.addNewIssue(parameters);\n\n    }\n\n\n    /**\n     * @name projects\n     * @function\n     * Returns all the projects\n     * @return {*}\n     */\n    getProjects() {\n        return this.Jira.listProjects();\n    }\n\n\n}"
+    "content": "#! /usr/bin/env node\nimport prettyjson from 'prettyjson';\n\nexport default class TapsterJira {\n\n    /**\n     * @constructor\n     * @function\n     * @param {Jira} Jira jira client\n     */\n    constructor(Jira) {\n        this.Jira = Jira;\n    }\n\n    /**\n     * @name createIssue\n     * @function\n     * Creates a new jira issue\n     * @param {string} type\n     * @param {string} project - jira project key\n     * @param {string} subject\n     * @param {string} description\n     * @param {string} assignee\n     */\n    createIssue(type, project, subject, description, assignee) {\n\n        let parameters = {fields: {}};\n        parameters.fields.project = {key: project};\n        parameters.fields.issuetype = {name: type};\n        parameters.fields.summary = subject;\n        parameters.fields.description = description;\n\n        if (assignee) {\n            parameters.fields.assignee = {name: assignee};\n        }\n\n\n        console.log(prettyjson.render('Creating issue'));\n\n        return this.Jira.addNewIssue(parameters);\n\n    }\n\n\n    /**\n     * @name projects\n     * @function\n     * Returns all the projects\n     * @return {*}\n     */\n    getProjects() {\n        return this.Jira.listProjects();\n    }\n\n\n}"
   },
   {
     "__docId__": 1,
@@ -25,7 +25,7 @@
     "importPath": "npm-jira/src/TapsterJira.js",
     "importStyle": "TapsterJira",
     "description": null,
-    "lineNumber": 3,
+    "lineNumber": 4,
     "undocument": true,
     "interface": false
   },
@@ -39,7 +39,7 @@
     "longname": "src/TapsterJira.js~TapsterJira#constructor",
     "access": null,
     "description": "",
-    "lineNumber": 10,
+    "lineNumber": 11,
     "unknown": [
       {
         "tagName": "@constructor",
@@ -74,7 +74,7 @@
     "longname": "src/TapsterJira.js~TapsterJira#Jira",
     "access": null,
     "description": null,
-    "lineNumber": 11,
+    "lineNumber": 12,
     "undocument": true,
     "type": {
       "types": [
@@ -92,7 +92,7 @@
     "longname": "src/TapsterJira.js~TapsterJira#createIssue",
     "access": null,
     "description": "",
-    "lineNumber": 24,
+    "lineNumber": 25,
     "unknown": [
       {
         "tagName": "@name",
@@ -172,7 +172,7 @@
     "longname": "src/TapsterJira.js~TapsterJira#getProjects",
     "access": null,
     "description": "",
-    "lineNumber": 46,
+    "lineNumber": 51,
     "unknown": [
       {
         "tagName": "@name",
@@ -205,7 +205,7 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "import prettyjson from 'prettyjson';\nimport JiraApi from 'jira-client';\nimport TapsterJira from './TapsterJira';\nimport config from './config';\nimport inquirer from 'inquirer';\n\n// Pretty Json options\nconst jsonOptions = {\n    noColor: false\n};\n\n// Init JIRAClient\nconst jr = new JiraApi(config['jira-client-settings']);\nconst Jira = new TapsterJira(jr);\nlet projects = Jira.getProjects();\nlet ticket = {};\n\n// get ticket details from user input, passing in the processor\ngetTicketDetails(Jira.createIssue);\n\n\nfunction getTicketDetails(cb) {\n    \"use strict\";\n\n    let prompts = [];\n    projects.then(function (response) {\n        \"use strict\";\n        let arr = [];\n        for (var i = 0; i < response.length; i++) {\n            arr.push({value: response[i].key, name: response[i].name});\n        }\n\n        // projects\n        prompts.push({\n            type   : \"list\",\n            name   : \"project\",\n            message: \"Choose JIRA project\",\n            choices: arr\n        });\n\n        // issue types\n        prompts.push({\n            type   : \"list\",\n            name   : \"type\",\n            message: \"Choose type\",\n            choices: config['jira-issue-types']\n        });\n\n        // subject\n        prompts.push({\n            type   : 'string',\n            name   : 'subject',\n            message: 'Subject'\n        });\n        // description\n        prompts.push({\n            type   : 'string',\n            name   : 'description',\n            message: 'Description'\n        });\n        prompts.push({\n            type   : 'string',\n            name   : 'assignee',\n            message: 'assignee',\n            default: config['jira-client-settings']['username']\n        });\n\n        inquirer.prompt(prompts).then(function (answers) {\n            if (answers) {\n                Jira.createIssue(answers.type, answers.project, answers.subject, answers.description, answers.assignee).then(function (response) {\n                    print(response);\n                }).catch(err => {\n                    errorHandler(err.message);\n                });\n            } else {\n                errorHandler('Something went wrong');\n            }\n        });\n\n    });\n}\n\n\nfunction print(msg) {\n    \"use strict\";\n    return console.log(prettyjson.render(msg));\n}\nfunction errorHandler(err) {\n    \"use strict\";\n    return console.log(prettyjson.render(err));\n}"
+    "content": "#! /usr/bin/env node\nimport prettyjson from 'prettyjson';\nimport JiraApi from 'jira-client';\nimport TapsterJira from './TapsterJira';\nimport config from '../config';\nimport inquirer from 'inquirer';\n\n// Pretty Json options\nconst jsonOptions = {\n    noColor: false\n};\n\n// Init JIRAClient\nconst jr = new JiraApi(config['jira-client-settings']);\nconst Jira = new TapsterJira(jr);\nlet projects = Jira.getProjects();\nlet ticket = {};\n\n// get ticket details from user input, passing in the processor\ngetTicketDetails(Jira.createIssue);\n\n\nfunction getTicketDetails(cb) {\n    \"use strict\";\n\n    let prompts = [];\n    projects.then(function (response) {\n        \"use strict\";\n        let arr = [];\n        for (var i = 0; i < response.length; i++) {\n            arr.push({value: response[i].key, name: response[i].name});\n        }\n\n        // projects\n        prompts.push({\n            type   : \"list\",\n            name   : \"project\",\n            message: \"Choose JIRA project\",\n            choices: arr,\n            default: config['jira-client-settings']['projectKey']\n        });\n\n        // issue types\n        prompts.push({\n            type   : \"list\",\n            name   : \"type\",\n            message: \"Choose type\",\n            choices: config['jira-issue-types'],\n            default: config['jira-client-settings']['defaultIssueType']\n        });\n\n        // subject\n        prompts.push({\n            type   : 'string',\n            name   : 'subject',\n            message: 'Subject'\n        });\n        // description\n        prompts.push({\n            type   : 'string',\n            name   : 'description',\n            message: 'Description'\n        });\n        prompts.push({\n            type   : 'string',\n            name   : 'assignee',\n            message: 'assignee',\n            default: config['jira-client-settings']['username']\n        });\n\n        inquirer.prompt(prompts).then(function (answers) {\n            if (answers) {\n                Jira.createIssue(answers.type, answers.project, answers.subject, answers.description, (config['jira-default-project-settings']['shouldSetAssignee']) ? answers.assignee : null).then(function (response) {\n                    print(response);\n                }).catch(err => {\n                    errorHandler(err.message);\n                });\n            } else {\n                errorHandler('Something went wrong');\n            }\n        });\n\n    });\n}\n\n\nfunction print(msg) {\n    \"use strict\";\n    return console.log(prettyjson.render(msg));\n}\nfunction errorHandler(err) {\n    \"use strict\";\n    return console.log(prettyjson.render(err));\n}"
   },
   {
     "__docId__": 7,
@@ -220,7 +220,7 @@
     "importPath": "npm-jira/src/index.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 8,
+    "lineNumber": 9,
     "undocument": true,
     "type": {
       "types": [
@@ -241,7 +241,7 @@
     "importPath": "npm-jira/src/index.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 13,
+    "lineNumber": 14,
     "undocument": true,
     "type": {
       "types": [
@@ -262,7 +262,7 @@
     "importPath": "npm-jira/src/index.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 14,
+    "lineNumber": 15,
     "undocument": true,
     "type": {
       "types": [
@@ -283,7 +283,7 @@
     "importPath": "npm-jira/src/index.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 15,
+    "lineNumber": 16,
     "undocument": true,
     "type": {
       "types": [
@@ -304,7 +304,7 @@
     "importPath": "npm-jira/src/index.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 16,
+    "lineNumber": 17,
     "undocument": true,
     "type": {
       "types": [
@@ -325,7 +325,7 @@
     "importPath": "npm-jira/src/index.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 22,
+    "lineNumber": 23,
     "undocument": true,
     "params": [
       {
@@ -350,7 +350,7 @@
     "importPath": "npm-jira/src/index.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 84,
+    "lineNumber": 87,
     "undocument": true,
     "params": [
       {
@@ -380,7 +380,7 @@
     "importPath": "npm-jira/src/index.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 88,
+    "lineNumber": 91,
     "undocument": true,
     "params": [
       {

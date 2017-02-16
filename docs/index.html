@@ -39,6 +39,34 @@
 
 <div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="create-jira-issues-from-the-cli">Create JIRA issues from the CLI</h1>
 <p>A Node.js wrapper for performing jira actions from the cli</p>
+<h2 id="setup">Setup</h2>
+<p>Create a config.json file in the src directory</p>
+<pre><code class="lang-$xslt"><code class="source-code prettyprint">{
+  &quot;jira-client-settings&quot;: {
+    &quot;protocol&quot;: &quot;https&quot;,
+    &quot;host&quot;: &quot;tapster.atlassian.net&quot;,
+    &quot;username&quot;: &quot;&quot;, // your jira username
+    &quot;password&quot;: &quot;&quot;, // your jira password
+    &quot;apiVersion&quot;: &quot;2&quot;,
+    &quot;strictSSL&quot;: true
+  },
+  &quot;jira-default-project-settings&quot;: {
+    &quot;projectKey&quot;: &quot;&quot;, // default project key
+    &quot;defaultIssueType&quot;: &quot;Task&quot; // default issue type, i.e. Task or Bug
+  },
+  &quot;jira-issue-types&quot;: [
+    &quot;Task&quot;,
+    &quot;Bug&quot;
+  ]
+}</code>
+</code></pre>
+<h2 id="run-from-cli">Run from cli</h2>
+<p>It&apos;s possible to have the module acting as a cli command.</p>
+<pre><code class="lang-$xslt"><code class="source-code prettyprint">$sudo npm link</code>
+</code></pre>
+<p>After that you can use:</p>
+<pre><code class="lang-$xslt"><code class="source-code prettyprint">$jira</code>
+</code></pre>
 </div>
 </div>
 

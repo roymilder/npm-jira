@@ -77,4 +77,3 @@ var TapsterJira = function () {
 }();
 
 exports.default = TapsterJira;
-//# sourceMappingURL=TapsterJira.js.map

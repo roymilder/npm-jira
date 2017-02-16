@@ -38,10 +38,11 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/index.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import prettyjson from &apos;prettyjson&apos;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">#! /usr/bin/env node
+import prettyjson from &apos;prettyjson&apos;;
 import JiraApi from &apos;jira-client&apos;;
 import TapsterJira from &apos;./TapsterJira&apos;;
-import config from &apos;./config&apos;;
+import config from &apos;../config&apos;;
 import inquirer from &apos;inquirer&apos;;
 
 // Pretty Json options
@@ -75,7 +76,8 @@ function getTicketDetails(cb) {
             type   : &quot;list&quot;,
             name   : &quot;project&quot;,
             message: &quot;Choose JIRA project&quot;,
-            choices: arr
+            choices: arr,
+            default: config[&apos;jira-client-settings&apos;][&apos;projectKey&apos;]
         });
 
         // issue types
@@ -83,7 +85,8 @@ function getTicketDetails(cb) {
             type   : &quot;list&quot;,
             name   : &quot;type&quot;,
             message: &quot;Choose type&quot;,
-            choices: config[&apos;jira-issue-types&apos;]
+            choices: config[&apos;jira-issue-types&apos;],
+            default: config[&apos;jira-client-settings&apos;][&apos;defaultIssueType&apos;]
         });
 
         // subject
@@ -107,7 +110,7 @@ function getTicketDetails(cb) {
 
         inquirer.prompt(prompts).then(function (answers) {
             if (answers) {
-                Jira.createIssue(answers.type, answers.project, answers.subject, answers.description, answers.assignee).then(function (response) {
+                Jira.createIssue(answers.type, answers.project, answers.subject, answers.description, (config[&apos;jira-default-project-settings&apos;][&apos;shouldSetAssignee&apos;]) ? answers.assignee : null).then(function (response) {
                     print(response);
                 }).catch(err =&gt; {
                     errorHandler(err.message);

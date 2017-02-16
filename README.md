@@ -37,3 +37,10 @@ After that you can use:
 ```$xslt
 $jira
 ```
+
+## NVM
+If node/npm is installed with the wrong permissions (and you're unable to run npm link), remove node and reinstall using NVM.
+
+See: http://stackoverflow.com/questions/16151018/npm-throws-error-without-sudo
+
+nvm @ github: https://github.com/creationix/nvm

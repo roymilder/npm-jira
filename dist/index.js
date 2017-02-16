@@ -110,4 +110,3 @@ function errorHandler(err) {
 
     return console.log(_prettyjson2.default.render(err));
 }
-//# sourceMappingURL=index.js.map
