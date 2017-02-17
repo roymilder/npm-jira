@@ -16,10 +16,18 @@ const Jira = new TapsterJira(jr);
 let projects = Jira.getProjects();
 let ticket = {};
 
+
+print('JIRA Cli control');
 // get ticket details from user input, passing in the processor
 getTicketDetails(Jira.createIssue);
 
 
+/**
+ * @name getTicketDetails
+ * @function
+ * Get the ticket details from the user
+ * @param {Function} cb callback function that creates the actual ticket
+ */
 function getTicketDetails(cb) {
     "use strict";
 
@@ -71,10 +79,26 @@ function getTicketDetails(cb) {
         inquirer.prompt(prompts).then(function (answers) {
             if (answers) {
                 Jira.createIssue(answers.type, answers.project, answers.subject, answers.description, (config['jira-default-project-settings']['shouldSetAssignee']) ? answers.assignee : null).then(function (response) {
+
                     print(response);
+
+                    inquirer.prompt({
+                        type: 'input',
+                        name   : 'reload',
+                        message: 'Create another ticket?',
+                        choices: ['Yes', 'No'],
+                        default: 'Yes'
+                    }).then(function (answers) {
+                        if (answers.reload === "Yes") {
+                            return getTicketDetails(Jira.createIssue);
+                        }
+                        print('Goodbye!');
+                    });
+
                 }).catch(err => {
                     errorHandler(err.message);
                 });
+
             } else {
                 errorHandler('Something went wrong');
             }
